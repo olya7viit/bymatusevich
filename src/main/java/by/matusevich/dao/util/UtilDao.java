@@ -1,5 +1,6 @@
 package by.matusevich.dao.util;
 
+import by.matusevich.dao.DaoHelper;
 import by.matusevich.dao.exception.DAOException;
 import by.matusevich.model.entity.Operation;
 import by.matusevich.model.entity.User;
@@ -14,10 +15,6 @@ import java.util.Scanner;
 
 public class UtilDao {
 
-    private final static String PARAM_DELIMETER = " ";
-
-    private static final int LOGIN_POSITION = 1;
-
     public static List<User> reedUsers(String fileName) throws DAOException {
         String login, password, userRole;
         String[] stringToSeparate;
@@ -26,22 +23,23 @@ public class UtilDao {
         File file = new File(fileName);
         FileReader fr = null;
         User user;
-        List<Operation> operations = new ArrayList<Operation>();
-        List<User> users = new ArrayList<User>();
+        List<Operation> operations = new ArrayList<>();
+        List<User> users = new ArrayList<>();
 
         try {
             fr = new FileReader(file);
             Scanner scan = new Scanner(fr);
             while (scan.hasNextLine()) {
-                stringToSeparate = scan.nextLine().split(PARAM_DELIMETER);
-                userRole = stringToSeparate[0];
-                login = stringToSeparate[1];
-                password = stringToSeparate[2];
+                stringToSeparate = scan.nextLine().split(DaoHelper.PARAM_DELIMETER);
+                userRole = stringToSeparate[DaoHelper.ROLE_POSITION];
+                login = stringToSeparate[DaoHelper.LOGIN_POSITION];
+                password = stringToSeparate[DaoHelper.PASSWORD_POSITION];
 
                 countOperation = Integer.parseInt(scan.nextLine());
                 for (int i = 0; i < countOperation; i++) {
-                    stringToSeparate = scan.nextLine().split(PARAM_DELIMETER);
-                    operations.add(new Operation(Double.parseDouble(stringToSeparate[0]), stringToSeparate[1]));
+                    stringToSeparate = scan.nextLine().split(DaoHelper.PARAM_DELIMETER);
+                    operations.add(new Operation(Double.parseDouble(stringToSeparate[DaoHelper.SUM_POSITION]),
+                            stringToSeparate[DaoHelper.TYPE_POSITION]));
                 }
 
 
@@ -49,9 +47,7 @@ public class UtilDao {
                 users.add(user);
                 operations = new ArrayList<>();
             }
-        } catch (IOException e) {
-            throw new DAOException("Errors during the registration procedure", e);
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (IOException | ArrayIndexOutOfBoundsException e) {
             throw new DAOException("Errors during the registration procedure", e);
         } finally {
             try {
@@ -70,21 +66,22 @@ public class UtilDao {
         String[] stringToSeparate;
         int countOperation;
         File file = new File(fileName);
-        List<Operation> operations = new ArrayList<Operation>();
+        List<Operation> operations = new ArrayList<>();
 
         try {
             fr = new FileReader(file);
             Scanner scan = new Scanner(fr);
 
             while (scan.hasNextLine()) {
-                stringToSeparate = scan.nextLine().split(PARAM_DELIMETER);
-                currentLogin = stringToSeparate[1];
+                stringToSeparate = scan.nextLine().split(DaoHelper.PARAM_DELIMETER);
+                currentLogin = stringToSeparate[DaoHelper.LOGIN_POSITION];
 
                 countOperation = Integer.parseInt(scan.nextLine());
                 for (int i = 0; i < countOperation; i++) {
-                    stringToSeparate = scan.nextLine().split(PARAM_DELIMETER);
+                    stringToSeparate = scan.nextLine().split(DaoHelper.PARAM_DELIMETER);
                     if (login.equals(currentLogin)) {
-                        operations.add(new Operation(Double.parseDouble(stringToSeparate[0]), stringToSeparate[1]));
+                        operations.add(new Operation(Double.parseDouble(stringToSeparate[DaoHelper.SUM_POSITION]),
+                                stringToSeparate[DaoHelper.TYPE_POSITION]));
                         flag = true;
                     }
                 }
@@ -162,9 +159,9 @@ public class UtilDao {
             Scanner scan = new Scanner(fr);
             while (scan.hasNextLine()) {
 
-                stringToSeparate = scan.nextLine().split(PARAM_DELIMETER);
+                stringToSeparate = scan.nextLine().split(DaoHelper.PARAM_DELIMETER);
 
-                if(stringToSeparate[LOGIN_POSITION].equals(login)){
+                if(stringToSeparate[DaoHelper.LOGIN_POSITION].equals(login)){
                     result= true;
                 }
                 countOperation = Integer.parseInt(scan.nextLine());

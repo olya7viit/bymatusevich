@@ -1,5 +1,6 @@
 package by.matusevich.dao.impl;
 
+import by.matusevich.dao.DaoHelper;
 import by.matusevich.dao.UserDAO;
 import by.matusevich.dao.exception.DAOException;
 import by.matusevich.dao.util.UtilDao;
@@ -13,12 +14,10 @@ import java.util.List;
 
 public class FileUserDAO implements UserDAO {
 
-    private final static String FILE_NAME = "src/main/resources/userBase.txt";
-
     @Override
     public void signIn(String login, String password, String role) throws DAOException {
         boolean result = false;
-        List<User> users = UtilDao.reedUsers(FILE_NAME);
+        List<User> users = UtilDao.reedUsers(DaoHelper.FILE_NAME);
         for (User user : users) {
             if (user.getLogin().equals(login) &&
                     user.getPassword().equals(password) &&
@@ -34,11 +33,10 @@ public class FileUserDAO implements UserDAO {
     @Override
     public void signUp(User user) throws DAOException {
 
-        if (!UtilDao.loginExists(FILE_NAME, user.getLogin())) {
+        if (!UtilDao.loginExists(DaoHelper.FILE_NAME, user.getLogin())) {
 
             try {
-                File file = new File(FILE_NAME);
-                //file.createNewFile();
+                File file = new File(DaoHelper.FILE_NAME);
                 FileWriter writer = new FileWriter(file, true);
 
                 writer.write(user.getRole() + " ");
@@ -57,15 +55,15 @@ public class FileUserDAO implements UserDAO {
 
     @Override
     public List<User> findAll() throws DAOException {
-        return UtilDao.reedUsers(FILE_NAME);
+        return UtilDao.reedUsers(DaoHelper.FILE_NAME);
     }
 
     @Override
     public void delete(String login, int num) throws DAOException {
 
-        List<User> users = UtilDao.reedUsers(FILE_NAME);
+        List<User> users = UtilDao.reedUsers(DaoHelper.FILE_NAME);
 
-        List<Operation> operationsThisUser = UtilDao.reedOperations(FILE_NAME, login);
+        List<Operation> operationsThisUser = UtilDao.reedOperations(DaoHelper.FILE_NAME, login);
 
         if (num > users.size()) {
             throw new DAOException("Invalid operation number");
@@ -78,7 +76,7 @@ public class FileUserDAO implements UserDAO {
         users.remove(num - 1);
 
         UtilDao.overwritingOperations(users, operationsThisUser, login);
-        UtilDao.writeAllUsers(FILE_NAME, users);
+        UtilDao.writeAllUsers(DaoHelper.FILE_NAME, users);
     }
 }
 
